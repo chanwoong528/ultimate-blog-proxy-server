@@ -1,17 +1,16 @@
+//@ts-nocheck
 process.env.NODE_ENV === "dev"
   ? require("dotenv").config({ path: "./env/dev.env" })
   : require("dotenv").config({ path: "./env/prod.env" });
 
 const express = require("express");
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
-
 const app = express();
 const PORT = process.env.PORT || 6002;
-
 
 app.use(
   cors({
@@ -31,11 +30,9 @@ const apiProxy = createProxyMiddleware({
   target: process.env.API_URL,
   changeOrigin: true,
 });
-app.use('/', apiProxy);
+app.use("/", apiProxy);
 
-// app.get("/", (req, res) => {
-//   console.log("!!!!!!!!")
-// })
+
 app.listen(PORT, (err) => {
   if (err) {
     console.log(`Unable to run Server on ${PORT}=> ${err}`);
