@@ -1,0 +1,25 @@
+{
+  "name": "ultimate-moonblog-api-gateway",
+  "version": "1.0.0",
+  "description": "gateway for serveer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=prod node dist/src/index.js",
+    "build": "cross-env NODE_ENV=prod tsc -p .",
+    "dev": "cross-env NODE_ENV=dev nodemon"
+  },
+  "author": "moon",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "http-proxy-middleware": "^2.0.6",
+    "nodemon": "^3.0.1"
+  }
+}
