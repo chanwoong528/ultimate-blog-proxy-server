@@ -3,6 +3,8 @@ process.env.NODE_ENV === "dev"
   ? require("dotenv").config({ path: "./env/dev.env" })
   : require("dotenv").config({ path: "./env/prod.env" });
 
+import { isLoggedIn } from "./middleware/AuthMiddleware";
+
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
@@ -24,14 +26,35 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
+function onProxReq(proxyReq, req, res) {
+  const bodyData = JSON.stringify(req.body);
+  proxyReq.setHeader("Content-Type", "application/json");
+  proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+  proxyReq.write(bodyData);
+}
+
 const apiProxy = createProxyMiddleware({
-  // target: 'https://ulltimate-moonblog-node-production.up.railway.app',
-  // target: 'http://localhost:5002',
   target: process.env.API_URL,
   changeOrigin: true,
+  logLevel: "debug",
+  pathRewrite: {
+    "^/api": "/", // remove base path
+  },
+  onProxyReq: onProxReq,
 });
-app.use("/", apiProxy);
 
+const privateApiProxy = createProxyMiddleware({
+  target: process.env.API_URL,
+  changeOrigin: true,
+  logLevel: "debug",
+  pathRewrite: {
+    "^/certi": "/auth-api", // remove base path
+  },
+  onProxyReq: onProxReq,
+});
+
+app.use("/api", apiProxy);
+app.use("/certi", isLoggedIn, privateApiProxy);
 
 app.listen(PORT, (err) => {
   if (err) {
