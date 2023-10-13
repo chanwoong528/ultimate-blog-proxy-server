@@ -26,7 +26,9 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
 const apiProxy = createProxyMiddleware({
-  target: 'https://ulltimate-moonblog-node-production.up.railway.app',
+  // target: 'https://ulltimate-moonblog-node-production.up.railway.app',
+  // target: 'http://localhost:5002',
+  target: process.env.API_URL,
   changeOrigin: true,
 });
 app.use('/', apiProxy);
