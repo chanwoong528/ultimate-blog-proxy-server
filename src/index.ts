@@ -55,11 +55,15 @@ const privateApiProxy = createProxyMiddleware({
 
 app.use("/api", apiProxy);
 app.use("/certi", isLoggedIn, privateApiProxy);
+const wsProxy = createProxyMiddleware("ws://localhost:7002", {
+  changeOrigin: true,
+});
 
-app.listen(PORT, (err) => {
+const server = app.listen(PORT, (err) => {
   if (err) {
     console.log(`Unable to run Server on ${PORT}=> ${err}`);
   } else {
     console.log(`Server Up: ${PORT}`);
   }
 });
+server.on("upgrade", wsProxy.upgrade);
